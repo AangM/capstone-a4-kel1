@@ -367,6 +367,16 @@ def delete_audit_log(
     return {"deleted": True}
 
 
+@app.delete("/audit/")
+def delete_all_audit_logs(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(require_role("supervisor", "manager")),
+):
+    deleted = db.query(models.AuditLog).delete()
+    db.commit()
+    return {"deleted": deleted}
+
+
 @app.get("/detections/", response_model=list[schemas.DetectionListItem])
 def list_detections(
     db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)

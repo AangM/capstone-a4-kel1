@@ -69,13 +69,31 @@ export default function AuditPage() {
         <div>
           <p className="text-sm text-gray-300">Search audit entries by entity, action, user, or payload.</p>
         </div>
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search audit log..."
-          className="rounded-md border border-white/10 bg-charcoal-elevated px-3 py-2 text-sm text-white"
-        />
+        <div className="flex flex-wrap items-center gap-2">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search audit log..."
+            className="rounded-md border border-white/10 bg-charcoal-elevated px-3 py-2 text-sm text-white"
+          />
+          <button
+            type="button"
+            onClick={async () => {
+              if (!window.confirm('Hapus semua audit log?')) return;
+              try {
+                await api.delete('/audit/');
+                await load();
+              } catch (err) {
+                window.alert('Gagal menghapus semua audit log.');
+              }
+            }}
+            className="rounded bg-rose-600 px-3 py-2 text-sm font-semibold text-white hover:bg-rose-500"
+            disabled={loading || rows.length === 0}
+          >
+            Hapus Semua
+          </button>
+        </div>
       </div>
       <div className="overflow-x-auto rounded border border-white/10">
         <table className="w-full text-sm">
